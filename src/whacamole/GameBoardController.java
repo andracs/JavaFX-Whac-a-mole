@@ -36,7 +36,7 @@ public class GameBoardController implements Initializable {
 
     // Not related to the FXML template
     private static int MOLE_CYCLES = 25;
-    private static int MOLE_DISPLAY_DURATION = 2000;
+    private static int MOLE_DISPLAY_DURATION = 1300;
     private Image image;
     private ImageView imageView;
     private ArrayList<ImageView> imageList;
@@ -66,7 +66,8 @@ public class GameBoardController implements Initializable {
         score = 0;
         scoreLabel.setText(String.valueOf(score));
 
-        refereshMoles(); // First refereshing the GameBoard
+        // First refereshing the GameBoard
+        refereshMoles(); 
 
         // Setting up a timer
         Timeline timeline = new Timeline(new KeyFrame(
@@ -91,69 +92,67 @@ public class GameBoardController implements Initializable {
     }
     
 
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Img from https://koenig-media.raywenderlich.com/uploads/2013/09/WhackAMole1.jpg
-
-        //label.setText("Hello World!");
-        //Users/andrasacs/NetBeansProjects/WhacAMole/src/assets
+        
+        // Image from https://koenig-media.raywenderlich.com/uploads/2013/09/WhackAMole1.jpg
         image = new Image("file:./src/assets/Mole.jpg");
-
         imageList = new ArrayList();
-
+        
+        // Creating an arraylist with 9 mole ImageViews
         for (int i = 0; i < 9; i++) {
 
             imageView = new ImageView(image);
             imageView.setFitHeight(100);
             imageView.setFitWidth(100);
             imageView.setImage(image);
-            imageView.applyCss();
             imageView.setVisible(true);
             imageList.add(imageView);
             int row = i / 3;
             int column = i % 3;
-            // System.out.println("Row " + row + " Column " + column);
+            // DEBUG System.out.println("Row " + row + " Column " + column);
             gridPane.add(imageView, row, column);
             gridPane.setHalignment(imageView, HPos.CENTER);
 
-            //Creating the mouse event handler 
+            //Creating a mouse event handler which hides the mole on click
             EventHandler<MouseEvent> eventHandler = (MouseEvent e) -> {
-                System.out.println("Clicked");
-                //imageView.setVisible(false);
-                //System.out.println(gridPane.getChildren().toString());
+                
+                System.out.println("Mole clicked");
                 ImageView iv = (ImageView) e.getSource();
                 iv.setVisible(false);
+                
+                // And updating the score
                 score++;
-                //System.out.println(score);
                 scoreLabel.setText(String.valueOf(score));
 
             };
-            //Adding event Filter 
+            //Adding event Filter for the event handler above
             imageView.addEventFilter(MouseEvent.MOUSE_CLICKED, eventHandler);
         }
-
+        
+        // Creating a "Play again button"
         button = new Button("Play again");
         button.setOnAction((event) -> this.startGame(event));
-        //gridPane.add(button, 1, 1);
         button.setLayoutX(200);
         button.setLayoutY(340);
         anchorPane.getChildren().add(button);
         gridPane.setHalignment(button, HPos.CENTER);
-        button.setVisible(false);
-
+        button.setVisible(false); // It will be only visible on game over
+        
+        // Tried to bind data, no success :-(
         //scoreLabel.textProperty().bind(new SimpleIntegerProperty(score).asString());
     }
 
     private void refereshMoles() {
+
         System.out.println("Gameboard refreshed");
-        // hide all moles
-        //   Node node = gridPane.getChildren().get(0);
+
+        // Hide all the moles!
         for (ImageView moleImage : imageList) {
             moleImage.setVisible(false);
         }
 
-        // reveal some  
+        // Reveal some random moles
         Random randomGenerator = new Random();
         int someMoles = randomGenerator.nextInt(7) + 1;
         for (int i = 0; i < someMoles; i++) {
@@ -163,7 +162,7 @@ public class GameBoardController implements Initializable {
 
     }
     
-        // Called from the main menu
+    // Called from the main menu --> Quit
     public void quitApplication() {
         Platform.exit();
     }
